@@ -1,4 +1,4 @@
-name: Run Forecast Generator
+name: Run Forecast Generator 2
 
 on:
   schedule:
