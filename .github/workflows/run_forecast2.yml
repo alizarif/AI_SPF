@@ -1,4 +1,4 @@
-name: Run Forecast Generator 2
+name: Run Forecast Generator
 
 on:
   schedule:
@@ -28,12 +28,12 @@ jobs:
       run: |
         echo "API_KEY1=${{ secrets.API_KEY1 }}" > api.env
 
-    - name: Run forecast generator 2
-      run: python forecast_generator2.py
+    - name: Run forecast generator
+      run: python forecast_generator.py
 
     - name: Commit and push if there are changes
       run: |
         git config --global user.name 'GitHub Action'
         git config --global user.email 'action@github.com'
-        git add future_forecasts/* forecast_trends/*
+        git add future_forecasts/* forecast_trends/* future_forecasts/detailed_forecasts_*.csv
         git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update forecasts and trends" && git push)
