@@ -88,7 +88,8 @@ def plot_forecast_trends(df, output_folder):
         plt.plot(periods, stats['mean'], color='blue', linewidth=2, label='Average')
         plt.fill_between(periods, stats['min'], stats['max'], alpha=0.2, color='blue', label='Min-Max Range')
         
-        ci = stats['std'] * stats.index.map(lambda x: stats.t.interval(0.95, len(var_data[var_data['Period'] == x]) - 1)[0])
+        # Calculate confidence interval using a simpler method
+        ci = 1.96 * stats['std'] / np.sqrt(var_data.groupby('Period').size())
         plt.fill_between(periods, stats['mean'] - ci, stats['mean'] + ci, alpha=0.4, color='green', label='95% CI')
         
         plt.title(f'Forecast Trend for {variable}')
