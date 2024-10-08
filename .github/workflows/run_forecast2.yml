@@ -1,4 +1,4 @@
-name: Run Forecast Generator
+name: Run Forecast Generator 2
 
 on:
   schedule:
@@ -28,8 +28,8 @@ jobs:
       run: |
         echo "API_KEY1=${{ secrets.API_KEY1 }}" > api.env
 
-    - name: Run forecast generator
-      run: python forecast_generator.py
+    - name: Run forecast generator 2
+      run: python forecast_generator2.py
 
     - name: Commit and push if there are changes
       run: |
