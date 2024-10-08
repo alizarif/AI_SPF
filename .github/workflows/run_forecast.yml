@@ -21,11 +21,28 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
+    - name: List files
+      run: ls -R
+    
+    - name: Check Python version
+      run: python --version
+    
     - name: Run forecast generator
       env:
         API_KEY1: ${{ secrets.API_KEY1 }}
-      run: python forecast_generator.py
-    
+      run: |
+        echo "Running forecast generator..."
+        python forecast_generator.py
+      
+    - name: Debug on failure
+      if: failure()
+      run: |
+        echo "Debugging information:"
+        python --version
+        pip list
+        ls -R
+        cat forecast_generator.py
+
     - name: Commit and push if there are changes
       run: |
         git config --global user.name 'GitHub Action'
