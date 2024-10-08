@@ -2,7 +2,8 @@ name: Run Forecast Generator
 
 on:
   schedule:
-    - cron: '0 0,12 * * *'  # Run at 00:00 and 12:00 UTC every day
+    - cron: '0 0,12 * * *'
+  workflow_dispatch:
 
 jobs:
   run-forecast:
