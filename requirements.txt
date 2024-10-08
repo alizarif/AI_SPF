@@ -1,0 +1,1 @@
+openai pandas python-dotenv
