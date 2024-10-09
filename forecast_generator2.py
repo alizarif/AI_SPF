@@ -148,7 +148,7 @@ def main():
     forecaster_data = pd.read_csv('forecasters.csv')
 
     forecast_query, current_date, current_quarter = create_forecast_query(variable_data)
-    assistant_id = "asst_BfXuSsa5HJSPokfNcW0ihdEk"
+    assistant_id = "asst_T7VyEcFoRB78xjDStEuTzsAa"
 
     all_forecasts = []
     all_responses = []
