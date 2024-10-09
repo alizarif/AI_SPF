@@ -13,6 +13,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Fetch all history for all branches and tags
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -35,6 +37,18 @@ jobs:
       run: |
         git config --global user.name 'GitHub Action'
         git config --global user.email 'action@github.com'
-        git pull origin main  # Pull latest changes
+        
+        # Determine the default branch name
+        DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+        echo "Default branch is $DEFAULT_BRANCH"
+        
+        # Pull latest changes from the default branch
+        git pull origin $DEFAULT_BRANCH
+        
         git add future_forecasts/* forecast_trends/* README.md
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update forecasts, trends, and README" && git push)
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Auto-update forecasts, trends, and README"
+          git push origin $DEFAULT_BRANCH
+        fi
