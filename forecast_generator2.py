@@ -104,7 +104,6 @@ def plot_forecast_trends(df, output_folder):
         plt.close()
 
     print(f"Trend plots for {current_date} saved in {output_folder}")
-    return current_date
 
 def save_detailed_output(all_responses, output_folder):
     columns = ['Forecast_ID', 'Current_Quarter', 'Initial Instruction', 'Initial Prompt', 'Initial Instruction Response', 
@@ -137,22 +136,6 @@ def save_detailed_output(all_responses, output_folder):
     filename = os.path.join(output_folder, f'detailed_forecasts_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv')
     df.to_csv(filename, index=False)
     print(f"Detailed forecasts saved to {filename}")
-
-def update_readme(plot_folder, current_date):
-    readme_content = f"# Forecast Trends (as of {current_date})\n\n"
-    
-    for file in sorted(os.listdir(plot_folder)):
-        if file.endswith(f"{current_date}.png"):
-            variable_name = file.replace(f"_trend_{current_date}.png", "").replace("_", " ")
-            readme_content += f"## {variable_name}\n\n"
-            readme_content += f"![{variable_name}](forecast_trends/{file})\n\n"
-    
-    readme_content += "\nThis README is automatically updated with each forecast run."
-    
-    with open("README.md", "w") as f:
-        f.write(readme_content)
-    
-    print("README.md updated with latest plots")
 
 def main():
     load_dotenv('api.env')
@@ -198,10 +181,8 @@ def main():
     plot_folder = 'forecast_trends'
     os.makedirs(plot_folder, exist_ok=True)
     df_melted = load_and_prepare_data(formatted_df)
-    current_date = plot_forecast_trends(df_melted, plot_folder)
-    
-    # Update README with latest plots
-    update_readme(plot_folder, current_date)
+    plot_forecast_trends(df_melted, plot_folder)
+    print(f"Trend plots saved in {plot_folder}")
 
 if __name__ == "__main__":
     main()

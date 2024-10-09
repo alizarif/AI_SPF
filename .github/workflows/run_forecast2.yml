@@ -1,0 +1,39 @@
+name: Run Forecast Generator 2
+
+on:
+  schedule:
+    - cron: '0 13 * * *'  # Runs at 9:00 AM Eastern Time (13:00 UTC)
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  run-forecast:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas openai python-dotenv matplotlib numpy scipy
+
+    - name: Set up API key
+      run: |
+        echo "API_KEY1=${{ secrets.API_KEY1 }}" > api.env
+
+    - name: Run forecast generator 2
+      run: python forecast_generator2.py
+
+    - name: Commit and push if there are changes
+      run: |
+        git config --global user.name 'GitHub Action'
+        git config --global user.email 'action@github.com'
+        git add future_forecasts/* forecast_trends/* future_forecasts/detailed_forecasts_*.csv
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update forecasts and trends" && git push)
