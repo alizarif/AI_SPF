@@ -29,8 +29,7 @@ def create_forecast_query(variable_data):
     return query, current_date, current_quarter
 
 def process_forecast(client, assistant_id, name, persona, forecast_query):
-    thread = client.beta.threads.create()
-    
+    responses = []
     messages = [
         {"role": "user", "content": f"You are {name}. {persona}\n\nDo you understand your role?"},
         {"role": "user", "content": forecast_query},
@@ -38,17 +37,30 @@ def process_forecast(client, assistant_id, name, persona, forecast_query):
     ]
     
     for message in messages:
-        client.beta.threads.messages.create(thread_id=thread.id, **message)
-        run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=assistant_id)
+        thread = client.beta.threads.create()
+        
+        client.beta.threads.messages.create(
+            thread_id=thread.id,
+            **message
+        )
+        
+        run = client.beta.threads.runs.create(
+            thread_id=thread.id,
+            assistant_id=assistant_id
+        )
         
         while True:
             run_status = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
             if run_status.status == 'completed':
                 break
             time.sleep(1)
+        
+        messages = client.beta.threads.messages.list(thread_id=thread.id)
+        assistant_response = next((msg.content[0].text.value for msg in messages.data if msg.role == "assistant"), None)
+        
+        if assistant_response:
+            responses.append(assistant_response)
     
-    messages = client.beta.threads.messages.list(thread_id=thread.id)
-    responses = [msg.content[0].text.value for msg in reversed(messages.data) if msg.role == "assistant"]
     return responses
 
 def parse_forecasts(forecast_string):
